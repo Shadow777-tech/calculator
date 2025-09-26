@@ -1,4 +1,3 @@
-/* General page styling */
 body {
   display: flex;
   justify-content: center;
@@ -8,45 +7,40 @@ body {
   font-family: Arial, sans-serif;
 }
 
-/* Calculator container */
 .calculator {
   background: #fff;
   padding: 20px;
   border-radius: 20px;
-  box-shadow: 0px 4px 15px rgba(0,0,0,0.2);
-  width: 320px;
+  box-shadow: 0px 4px 20px rgba(0,0,0,0.3);
+  width: 400px;
 }
 
-/* Display styling */
 .display {
   background: #222;
   color: #fff;
-  font-size: 2.5rem;
+  font-size: 2rem;
   text-align: right;
-  padding: 20px;
+  padding: 15px;
   border-radius: 12px;
   margin-bottom: 15px;
   overflow-x: auto;
 }
 
-/* Buttons grid */
 .buttons {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 12px;
+  gap: 10px;
 }
 
-/* General button styling */
 button {
-  padding: 20px;
-  font-size: 1.2rem;
+  padding: 18px;
+  font-size: 1.1rem;
   border: none;
-  border-radius: 50px;
+  border-radius: 12px;
   cursor: pointer;
   transition: 0.2s;
 }
 
-/* Different colors for buttons */
 .number {
   background: #e0e0e0;
 }
@@ -55,21 +49,29 @@ button {
   background: #a0c4ff;
 }
 
+.function {
+  background: #ffd6a5;
+}
+
 .equal {
   background: #4361ee;
-  color: white;
+  color: #fff;
+  grid-row: span 2;
 }
 
 .all-clear {
   background: #ff6b6b;
-  color: white;
+  color: #fff;
 }
 
 .decimal {
   background: #e0e0e0;
 }
 
-/* Hover and active effects */
+.zero {
+  grid-column: span 2;
+}
+
 button:hover {
   filter: brightness(90%);
 }

@@ -1,108 +1,101 @@
 const display = document.getElementById("display");
-
-let firstOperand = null;
-let operator = null;
-let waitingForSecondOperand = false;
-let displayValue = "0";
+let expression = "";
 
 // Update display
 function updateDisplay() {
-  display.textContent = displayValue;
+  display.textContent = expression || "0";
 }
 
-// Input digits
+// Handle digits
 function inputDigit(digit) {
-  if (waitingForSecondOperand) {
-    displayValue = digit;
-    waitingForSecondOperand = false;
-  } else {
-    displayValue = displayValue === "0" ? digit : displayValue + digit;
-  }
+  expression += digit;
+  updateDisplay();
 }
 
-// Input decimal
+// Handle decimals
 function inputDecimal() {
-  if (!displayValue.includes(".")) {
-    displayValue += ".";
+  const lastNumber = expression.split(/[\+\−\×\÷\(\)]/).pop();
+  if (!lastNumber.includes(".")) {
+    expression += ".";
+    updateDisplay();
   }
 }
 
-// Handle operator
-function handleOperator(nextOperator) {
-  const inputValue = parseFloat(displayValue);
-
-  if (operator && waitingForSecondOperand) {
-    operator = nextOperator;
-    return;
+// Handle operators
+function handleOperator(op) {
+  if (/[\+\−\×\÷]$/.test(expression)) {
+    expression = expression.slice(0, -1) + op;
+  } else {
+    expression += op;
   }
-
-  if (firstOperand === null) {
-    firstOperand = inputValue;
-  } else if (operator) {
-    const result = performCalculation(firstOperand, inputValue, operator);
-    displayValue = String(result);
-    firstOperand = result;
-  }
-
-  operator = nextOperator;
-  waitingForSecondOperand = true;
+  updateDisplay();
 }
 
-// Perform calculations
-function performCalculation(first, second, op) {
-  switch (op) {
-    case "+": return first + second;
-    case "−": return first - second;
-    case "×": return first * second;
-    case "÷": return second !== 0 ? first / second : "Error";
-    default: return second;
-    case "%":return first * (second / 100)
+// Handle functions
+function handleFunction(func) {
+  switch (func) {
+    case "sin": expression += "Math.sin("; break;
+    case "cos": expression += "Math.cos("; break;
+    case "tan": expression += "Math.tan("; break;
+    case "log": expression += "Math.log10("; break;
+    case "ln": expression += "Math.log("; break;
+    case "√": expression += "Math.sqrt("; break;
+    case "x²": expression += "**2"; break;
+    case "1/x": expression = "1/(" + expression + ")"; break;
+    case "π": expression += "Math.PI"; break;
+    case "e": expression += "Math.E"; break;
+  }
+  updateDisplay();
+}
+
+// Perform calculation
+function performCalculation() {
+  try {
+    let result = expression
+      .replace(/÷/g, "/")
+      .replace(/×/g, "*")
+      .replace(/−/g, "-")
+      .replace(/%/g, "/100");
+
+    expression = String(eval(result));
+    updateDisplay();
+  } catch {
+    expression = "Error";
+    updateDisplay();
+    expression = "";
   }
 }
 
 // Clear all
 function clearAll() {
-  firstOperand = null;
-  operator = null;
-  waitingForSecondOperand = false;
-  displayValue = "0";
+  expression = "";
+  updateDisplay();
 }
 
 // Event listeners
 document.querySelectorAll(".number").forEach(btn => {
-  btn.addEventListener("click", () => {
-    inputDigit(btn.textContent);
-    updateDisplay();
-  });
+  btn.addEventListener("click", () => inputDigit(btn.textContent));
 });
 
 document.querySelectorAll(".operator").forEach(btn => {
-  btn.addEventListener("click", () => {
-    handleOperator(btn.textContent);
-    updateDisplay();
-  });
+  btn.addEventListener("click", () => handleOperator(btn.textContent));
+});
+
+document.querySelectorAll(".function").forEach(btn => {
+  btn.addEventListener("click", () => handleFunction(btn.textContent));
 });
 
 document.querySelector(".decimal").addEventListener("click", () => {
   inputDecimal();
-  updateDisplay();
 });
 
 document.querySelector(".equal").addEventListener("click", () => {
-  if (operator !== null) {
-    const result = performCalculation(firstOperand, parseFloat(displayValue), operator);
-    displayValue = String(result);
-    firstOperand = null;
-    operator = null;
-    waitingForSecondOperand = false;
-    updateDisplay();
-  }
+  performCalculation();
 });
 
 document.querySelector(".all-clear").addEventListener("click", () => {
   clearAll();
-  updateDisplay();
 });
 
-// Initialize display
+// Init display
 updateDisplay();
